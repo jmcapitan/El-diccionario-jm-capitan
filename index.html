@@ -71,8 +71,8 @@
 
         .controls {
             display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 15px;
+            grid-template-columns: 2fr 1fr 100px;
+            gap: 12px;
             margin-bottom: 20px;
         }
 
@@ -82,11 +82,7 @@
             }
         }
 
-        .search-box, .filter-box {
-            position: relative;
-        }
-
-        input[type="text"], select {
+        input[type="text"], select, .btn-reset {
             width: 100%;
             padding: 12px 16px;
             background: var(--bg-primary);
@@ -101,6 +97,21 @@
         input[type="text"]:focus, select:focus {
             border-color: var(--accent-blue);
             box-shadow: 0 0 8px rgba(27, 160, 230, 0.3);
+        }
+
+        .btn-reset {
+            background: #2a1b1b;
+            color: #ff6b6b;
+            border-color: #5c2424;
+            cursor: pointer;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .btn-reset:hover {
+            background: #421c1c;
+            border-color: #ff4d4d;
+            color: #ffffff;
         }
 
         .stats-bar {
@@ -127,7 +138,6 @@
             border-radius: 8px;
         }
 
-        /* Personalización barra de desplazamiento */
         .table-container::-webkit-scrollbar {
             width: 8px;
         }
@@ -213,17 +223,18 @@
                 <option value="Artillería y Proyectiles">2. Artillería y Proyectiles</option>
                 <option value="Balística y Blindaje">3. Balística y Blindaje</option>
                 <option value="Torpedos y Mecánicas">4. Torpedos</option>
-                <option value="Detección y Consumibles">5. Detección y Sigilo</option>
+                <option value="Detección y Consumibles">5. Detección y Consumibles</option>
                 <option value="Aviación y Submarinos">6. Aviación y Submarinos</option>
                 <option value="Táctica y Posicionamiento">7. Táctica y Posicionamiento</option>
                 <option value="Modos y Economía">8. Modos y Economía</option>
             </select>
         </div>
+        <button id="resetBtn" class="btn-reset" title="Limpiar todos los filtros">Limpiar</button>
     </div>
 
     <div class="stats-bar">
         <span>Términos encontrados: <span id="matchCount" class="badge">180</span></span>
-        <span>Pulsa <kbd>ESC</kbd> para limpiar la búsqueda</span>
+        <span>Pulsa <kbd>ESC</kbd> o haz clic en "Limpiar" para resetear</span>
     </div>
 
     <div class="table-container">
@@ -236,9 +247,7 @@
                     <th class="col-cat">Categoría</th>
                 </tr>
             </thead>
-            <tbody id="dictionaryBody">
-                <!-- Los términos se cargan dinámicamente -->
-            </tbody>
+            <tbody id="dictionaryBody"></tbody>
         </table>
         <div id="noResults" class="no-results" style="display: none;">
             No se encontraron términos que coincidan con la búsqueda.
@@ -447,6 +456,7 @@ const dictionary = [
 
 const searchInput = document.getElementById('searchInput');
 const categoryFilter = document.getElementById('categoryFilter');
+const resetBtn = document.getElementById('resetBtn');
 const dictionaryBody = document.getElementById('dictionaryBody');
 const matchCount = document.getElementById('matchCount');
 const noResults = document.getElementById('noResults');
@@ -504,15 +514,21 @@ function filterData() {
     renderTable(filtered, query);
 }
 
+function resetAll() {
+    searchInput.value = "";
+    categoryFilter.value = "ALL";
+    filterData();
+    searchInput.focus();
+}
+
 // Event Listeners
 searchInput.addEventListener('input', filterData);
 categoryFilter.addEventListener('change', filterData);
+resetBtn.addEventListener('click', resetAll);
 
 document.addEventListener('keydown', (e) => {
     if (e.key === "Escape") {
-        searchInput.value = "";
-        filterData();
-        searchInput.focus();
+        resetAll();
     }
 });
 
